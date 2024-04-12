@@ -41,13 +41,13 @@ class TranslationService:
     def translate_bulk(self, texts, target_language, po_file_path, current_batch):
         """Translates a list of texts in bulk and handles retries."""
         translated_texts = []
-        for i, _ in enumerate(range(0, len(texts), self.batch_size), start=current_batch):
+        for batch_index, i in enumerate(range(0, len(texts), self.batch_size), start=current_batch):
             batch_texts = texts[i:i + self.batch_size]
-            batch_info = f"File: {po_file_path}, Batch {i}/{self.total_batches}"
+            batch_info = f"File: {po_file_path}, Batch {batch_index}/{self.total_batches}"
             batch_info += f" (texts {i + 1}-{min(i + self.batch_size, len(texts))})"
             translation_request = (f"Please translate the following texts from English into {target_language}. "
                                    "Use the format 'Index: Text' for each segment:\n\n")
-            for index, text in enumerate(batch_texts, start=i * self.batch_size):
+            for index, text in enumerate(batch_texts, start=i):
                 translation_request += f"{index}: {text}\n"
 
             retries = 3
